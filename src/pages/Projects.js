@@ -227,7 +227,8 @@ function Projects() {
           {tabs.map((tab) => (
             <button
               key={tab.name}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+              className={`flex items-center gap-2 md:px-4 md:py-2 px-2 py-1 rounded-lg transition-all ${
+
                 activeTab === tab.name
                   ? "bg-blue-500 text-white shadow-lg"
                   : "bg-gray-200 text-gray-800"
@@ -311,12 +312,15 @@ const reactProjects = [
   
 
   {
-    title: "Habit Tracker",
-    description: "A habit tracker app to help you build good habits and break bad ones.",
-    image: "https://images.unsplash.com/photo-1612298948864-bb647fe8a241?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGhhYml0c3xlbnwwfHwwfHx8MA%3D%3D",
-    technologies: ["React", "Tailwind", "LocalStorage"],
-    demo: "https://habittify.netlify.app",
-    github: "https://github.com/Abhiram-Gaddam"
+    
+      title: "Movie Search App",
+      description: "A movie search app that allows users to look up movie titles, view posters, ratings, and basic details using the OMDB API.",
+      image: "https://plus.unsplash.com/premium_photo-1710961232986-36cead00da3c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bW92aWVzfGVufDB8fDB8fHww     ",
+      technologies: ["React", "OMDB API", "Tailwind"],
+      demo: "https://movie-search-app.netlify.app", // Replace with your live link
+      github: "https://github.com/Abhiram-Gaddam/movie-search-app" // Replace with your actual repo
+    
+    
   }
 ];
 
@@ -338,6 +342,14 @@ const MLprojects = [
     demo: "https://github.com/Abhiram-Gaddam/Chat_with_document",
     github: "https://github.com/Abhiram-Gaddam/Chat_with_document"
   },
+  {
+    title: "Movie Recommendation System",
+    description: "A system that recommends movies based on user preferences.",
+    technologies: ["React", "OMDB API","TD-IDF","Cosine Similarity"],
+    image : "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fG1vdmllJTIwcmV2aWV3fGVufDB8fDB8fHww",
+    demo:"#",
+    github: "https://github.com/Abhiram-Gaddam"
+},
   {
     title: "Multilingual Voice-to-Image Generator",
     description: "Convert voice input in multiple languages into AI-generated images.",
@@ -368,14 +380,7 @@ const otherProjects = [
     demo:"#",
     github: "https://github.com/Abhiram-Gaddam"
   },
-  {
-      title: "Movie Recommendation System",
-      description: "A system that recommends movies based on user preferences.",
-      technologies: ["React", "TMDb API"],
-      image : "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fG1vdmllJTIwcmV2aWV3fGVufDB8fDB8fHww",
-      demo:"#",
-      github: "https://github.com/Abhiram-Gaddam"
-  }
+ 
 ];
 
 export default Projects;
