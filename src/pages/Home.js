@@ -10,37 +10,60 @@ import abhi from "/Users/saikrishna/Documents/Abhiram/prac1/src/components/image
 
 function Home() {
   const [text, setText] = useState("");
-  const words = ["React Developer","Freelancer", "Machine Learning Engineer"];
+  
     
     const [wordIndex, setWordIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
     
   
+    // useEffect(() => {
+    //   const currentWord = words[wordIndex];
+    //   const typingSpeed = isDeleting ? 60 : 100;
+  
+    //   const timeout = setTimeout(() => {
+    //     setCharIndex((prev) =>
+    //       isDeleting ? prev - 1 : prev + 1
+    //     );
+    //     setText(currentWord.substring(0, charIndex));
+  
+    //     // Start deleting after full word is typed
+    //     if (!isDeleting && charIndex === currentWord.length) {
+    //       setTimeout(() => setIsDeleting(true), 1000);
+    //     }
+  
+    //     // Move to next word after deleting
+    //     if (isDeleting && charIndex === 0) {
+    //       setIsDeleting(false);
+    //       setWordIndex((prev) => (prev + 1) % words.length);
+    //     }
+    //   }, typingSpeed);
+  
+    //   return () => clearTimeout(timeout);
+    // }, [charIndex, isDeleting, wordIndex, words]);
     useEffect(() => {
+      const words = ["React Developer","Freelancer", "Machine Learning Engineer"]; 
+    
       const currentWord = words[wordIndex];
       const typingSpeed = isDeleting ? 60 : 100;
-  
+    
       const timeout = setTimeout(() => {
-        setCharIndex((prev) =>
-          isDeleting ? prev - 1 : prev + 1
-        );
+        setCharIndex((prev) => isDeleting ? prev - 1 : prev + 1);
         setText(currentWord.substring(0, charIndex));
-  
-        // Start deleting after full word is typed
+    
         if (!isDeleting && charIndex === currentWord.length) {
           setTimeout(() => setIsDeleting(true), 1000);
         }
-  
-        // Move to next word after deleting
+    
         if (isDeleting && charIndex === 0) {
           setIsDeleting(false);
           setWordIndex((prev) => (prev + 1) % words.length);
         }
       }, typingSpeed);
-  
+    
       return () => clearTimeout(timeout);
-    }, [charIndex, isDeleting, wordIndex, words]);
+    }, [charIndex, isDeleting, wordIndex]);
+    
 
 
   return (
@@ -50,7 +73,7 @@ function Home() {
       {/* Hero Section */}
       <header className="bg-gradient-to-r from-white to-blue-300 text-white">
         <div className="container mx-auto flex justify-between px-6 py-32">
-          <div className="max-w-3xl ml-20">
+          <div className="max-w-3xl md:ml-20">
             <h1 className=" w-fit pop px-2  rounded-md bg-amber-400 mt-20  mb-6 leading-tight">
              Gaddam Abhiram
             </h1>
@@ -95,7 +118,7 @@ function Home() {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
-          > <span className='text-black ml-10 pop font-light' >  Want to Know More </span><span className='bg-white border-0 scale-150 -mr-4 rotate-45  h-5 p-5 '  >  </span> </motion.h2>
+          > <span className='text-black ml-8 md:ml-11  pop text-lg md:text-4xl font-light' >  Want to Know More </span><span className='bg-white border-0 scale-150 -mr-4 rotate-45  h-5 p-5 '  >  </span> </motion.h2>
           {/* <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
@@ -140,14 +163,14 @@ function Home() {
                                       
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.5, ease: "easeOut", delay: 1.0  }}
-          viewport={{ once: true, amount: 0.2 }} className=' bg-blue-300 pl-5 text-center rounded-tr-lg flex justify-center text-wrap shrink items-center md:h-2/5 h-full md:py-0 py-3 mt-10 rounded-bl-full  rounded-tl-full ' > So! This is me Abhiram a Junior Front end Developer making mistakes while creating Magic.I aim to build applications that not only meet user needs but also push the boundaries of what's possible.
+          viewport={{ once: true, amount: 0.2 }} className=' bg-blue-300 pl-5 text-center rounded-tr-lg   flex justify-center text-wrap shrink items-center md:h-2/5 h-full md:py-0 py-3 md:mt-10 mt-6 rounded-bl-full  rounded-tl-full ' > So! This is me Abhiram a Junior Front end Developer making mistakes while creating Magic.I aim to build applications that not only meet user needs but also push the boundaries of what's possible.
           </motion.div>
 
           < motion.div initial={{ opacity: 0, x: 0 }}
                                       
             whileInView={{ opacity: 1, x: 50 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 1.3  }}
-            viewport={{ once: true, amount: 0.2 }} className=' bg-blue-300 pl-5 text-center text-wrap shrink rounded-l-lg flex justify-center items-center md:h-2/5 h-3/6  md:py-0 py-2 mt-40 rounded-br-full  rounded-tr-full ' > On this website, you'll find a collection of projects that showcase my skills and creativity. Each project represents my journey, growth, and the dedication I put into making meaningful contributions to the tech community
+            viewport={{ once: true, amount: 0.2 }} className=' bg-blue-300 pl-5 text-center text-wrap hidden md:flex shrink rounded-l-lg  justify-center items-center md:h-2/5 h-3/6  md:py-0 py-2 mt-40 rounded-br-full  rounded-tr-full ' > On this website, you'll find a collection of projects that showcase my skills and creativity. Each project represents my journey, growth, and the dedication I put into making meaningful contributions to the tech community
             </motion.div>
            </div>
 
