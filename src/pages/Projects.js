@@ -298,7 +298,7 @@ const reactProjects = [
     image: "https://images.unsplash.com/photo-1556742393-d75f468bfcb0?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     technologies: ["React", "API", "CSS"],
     demo: "https://restaurant-mgt.netlify.app",
-    github: "https://github.com/Abhiram-Gaddam"
+    github: "https://github.com/Abhiram-Gaddam/Restaurant-Mgt"
   },
 
   {
@@ -306,8 +306,8 @@ const reactProjects = [
     description: "A responsive dashboard for managing online store inventory.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
     technologies: ["React", "JavaScript", "Tailwind"],
-    demo: "https://e-commproject.netlify.app",
-    github: "https://github.com/Abhiram-Gaddam"
+    demo: "https://e-commerce-bva.netlify.app/",
+    github: "https://github.com/Abhiram-Gaddam/E-Commerce"
   },
   
 
@@ -317,8 +317,8 @@ const reactProjects = [
       description: "A movie search app that allows users to look up movie titles, view posters, ratings, and basic details using the OMDB API.",
       image: "https://plus.unsplash.com/premium_photo-1710961232986-36cead00da3c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bW92aWVzfGVufDB8fDB8fHww     ",
       technologies: ["React", "OMDB API", "Tailwind"],
-      demo: "https://movie-search-app.netlify.app", // Replace with your live link
-      github: "https://github.com/Abhiram-Gaddam/movie-search-app" // Replace with your actual repo
+      demo: "https://github.com/Abhiram-Gaddam/Projects/tree/main/movie-databae", // Replace with your live link
+      github: "https://github.com/Abhiram-Gaddam/Projects/tree/main/movie-databae" // Replace with your actual repo
     
     
   }
@@ -347,16 +347,16 @@ const MLprojects = [
     description: "A system that recommends movies based on user preferences.",
     technologies: ["React", "OMDB API","TD-IDF","Cosine Similarity"],
     image : "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fG1vdmllJTIwcmV2aWV3fGVufDB8fDB8fHww",
-    demo:"#",
-    github: "https://github.com/Abhiram-Gaddam"
+    demo:"https://github.com/Abhiram-Gaddam/Projects/tree/main/Movie_Recomm",
+    github: "https://github.com/Abhiram-Gaddam/Projects/tree/main/Movie_Recomm"
 },
   {
     title: "Multilingual Voice-to-Image Generator",
     description: "Convert voice input in multiple languages into AI-generated images.",
     image: "https://cdn.leonardo.ai/users/8449803c-7c7e-44f3-86d8-50beb4bbf121/generations/ae7cbcfc-07ab-48fb-8d9c-4a572a6c3225/Leonardo_Lightning_XL_image_generation_images_0.jpg",
     technologies: ["Speech Recognition", "NLP", "Stable Diffusion"],
-    demo: "#",
-    github: "https://github.com/Abhiram-Gaddam"
+    demo: "https://github.com/Abhiram-Gaddam/Projects/tree/main/Voice%20to%20image",
+    github: "https://github.com/Abhiram-Gaddam/Projects/tree/main/Voice%20to%20image"
 },
 
 
@@ -369,7 +369,7 @@ const otherProjects = [
     description: "Personal portfolio website built with React and Tailwind CSS.",
     technologies: ["React", "Tailwind CSS"],
     image: "https://images.unsplash.com/photo-1501959181532-7d2a3c064642?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D",
-    demo:"#",
+    demo:"abhiram-gaddam.github.io",
     github: "https://github.com/Abhiram-Gaddam"
   },
   {
