@@ -53,7 +53,7 @@ function Contact() {
                 <Mail className="text-blue-600" size={24} />
               </div>
               <h3 className="font-semibold mb-2">Email</h3>
-              <p className="text-gray-600">gaddamabhiram@gmail.com</p>
+              <p className="text-gray-600">gaddamabhiram.53@gmail.com</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="bg-blue-100 p-3 rounded-lg inline-block mb-4">
