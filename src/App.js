@@ -46,7 +46,7 @@ function App() {
     //   </div>
     //   </Switch>
     // </Router>
-    <Router>
+    <Router basename={process.env.PUBLIC_URL} >
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {isLoading ? <Loading /> : <Navbar />} 
       
