@@ -1,0 +1,76 @@
+/* @import "tailwindcss"; 
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background-color: #f4a300;
+  color: #22314f;
+}
+
+:focus-visible {
+  outline: 2px solid #ff6b4a;
+  outline-offset: 2px;
+} */
+
+@import "tailwindcss";
+
+/* 1. Define your custom theme variables here */
+@theme {
+  --color-ink: #fbf4e6;
+  --color-ink-2: #f5ead6;
+  --color-ink-3: #eeddb8;
+  --color-line: #e2cfa4;
+  --color-line-soft: #ecdfba;
+  --color-paper: #22314f;
+  --color-muted: #5c6f8a;
+  --color-copper: #f4a300;
+  --color-copper-soft: #d98c1f;
+  --color-copper-bright: #ff6b4a;
+  --color-teal: #2a9d78;
+  --color-amber: #f2b705;
+  --color-danger: #d1483c;
+
+  --font-display: var(--font-display), cursive;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-float-y: floatY 4s ease-in-out infinite;
+}
+
+/* 2. Keyframes are defined normally */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* 3. Custom utilities (like your background image) use the @utility directive */
+@utility bg-dot-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(217,140,31,0.22) 1px, transparent 0);
+}
+
+/* 4. Your base CSS resets */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background-color: var(--color-copper);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-copper-bright);
+  outline-offset: 2px;
+}
