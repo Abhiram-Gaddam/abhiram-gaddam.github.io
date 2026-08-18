@@ -313,61 +313,49 @@
 "use client";
 
 import { Content } from "@/lib/content";
-import { motion, type Variants } from "framer-motion"; // <-- Added type import
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 120, damping: 14 },
+  },
+};
+
+const BLOB = "rounded-[63%_37%_54%_46%/43%_65%_35%_57%]";
 
 export default function Hero({ hero }: { hero: Content["hero"] }) {
-  // Explicitly typed as Variants to fix the TS2322 errors
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { type: "spring", stiffness: 120, damping: 14 } 
-    },
-  };
+  const reduce = useReducedMotion();
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#Fdfbf7] px-6 pb-20 pt-16 sm:px-10 sm:pt-24 lg:px-16 lg:pt-32">
-      
-      {/* Subtle Dot Grid Background */}
-      <div 
-        className="absolute inset-0 z-0 bg-[radial-gradient(#cbd5e1_1.5px,transparent_1.5px)] bg-size-[24px_24px] opacity-60 pointer-events-none" 
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 mx-auto w-full max-w-7xl grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-24">
-        
-        {/* LEFT COLUMN: INTRO */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="relative"
-        >
-          {/* Tilted greeting */}
+    <section className="relative flex min-h-[90vh] items-center overflow-hidden px-6 pb-24 pt-16 sm:px-10 sm:pt-24 lg:px-16 lg:pt-15">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-24">
+        {/* LEFT: intro */}
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="relative order-2 lg:order-1">
           <motion.div variants={itemVariants} className="mb-4 inline-block">
-            <span className="font-display text-xl sm:text-2xl text-[#f59e0b] -rotate-2 block origin-bottom-left font-medium">
+            <span className="block origin-bottom-left -rotate-2 font-display text-xl font-medium text-copper-bright sm:text-2xl">
               Hi, I'm
             </span>
           </motion.div>
-          
-          {/* Main Name with animated underline */}
-          <motion.div variants={itemVariants} className="relative inline-block w-full mb-6">
-            <h1 className="font-display text-6xl leading-[0.95] text-paper sm:text-7xl lg:text-[5.5rem] tracking-tight">
+
+          <motion.div variants={itemVariants} className="relative mb-3 inline-block w-full">
+            <h1 className="font-display text-6xl leading-[0.95] tracking-tight text-paper sm:text-7xl lg:text-[5.5rem]">
               {hero.preferredName}.
             </h1>
-            <svg 
-              className="absolute -bottom-2 left-0 w-[85%] max-w-87.5 h-4 text-[#f59e0b] opacity-80" 
-              viewBox="0 0 200 12" 
-              fill="none" 
+            <svg
+              className="absolute -bottom-2 left-0 h-4 w-[85%] max-w-[350px] text-copper-bright opacity-80"
+              viewBox="0 0 200 12"
+              fill="none"
               preserveAspectRatio="none"
               aria-hidden="true"
             >
@@ -383,21 +371,20 @@ export default function Hero({ hero }: { hero: Content["hero"] }) {
             </svg>
           </motion.div>
 
-          <motion.h2 
-            variants={itemVariants} 
-            className="max-w-xl text-2xl font-medium leading-snug text-paper sm:text-3xl lg:text-4xl mb-5"
+          <motion.p
+            variants={itemVariants}
+            className="mb-6 font-mono text-xs font-semibold uppercase tracking-[0.15em] text-copper-soft sm:text-sm"
           >
             {hero.title}
-          </motion.h2>
+          </motion.p>
 
-          <motion.p 
-            variants={itemVariants} 
+          <motion.p
+            variants={itemVariants}
             className="max-w-lg text-lg leading-relaxed text-paper/70 lg:max-w-xl"
           >
             {hero.subheadline}
           </motion.p>
 
-          {/* Action Buttons */}
           <motion.div variants={itemVariants} className="mt-10 flex flex-wrap items-center gap-6">
             <motion.a
               whileHover={{ scale: 1.03, rotate: -1 }}
@@ -405,7 +392,7 @@ export default function Hero({ hero }: { hero: Content["hero"] }) {
               href={hero.ctaHref}
               target="_blank"
               rel="noreferrer"
-              className="rounded-xl border-2 border-paper bg-[#f59e0b] px-7 py-3.5 font-display text-xl text-paper shadow-[4px_4px_0_0_#22314f] transition-all hover:bg-[#fbbf24] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]"
+              className="rounded-xl border-2 border-paper bg-copper px-7 py-3.5 font-display text-xl text-paper shadow-[4px_4px_0_0_#22314f] transition-all hover:bg-copper-bright focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper"
             >
               {hero.ctaLabel}
             </motion.a>
@@ -413,74 +400,96 @@ export default function Hero({ hero }: { hero: Content["hero"] }) {
             <motion.a
               whileHover="hover"
               href="#projects"
-              className="group flex items-center gap-2 font-display text-xl text-paper underline decoration-2 decoration-[#f59e0b]/50 underline-offset-4 hover:decoration-[#f59e0b] transition-colors"
+              className="group flex items-center gap-2 font-display text-xl text-paper underline decoration-copper/50 decoration-2 underline-offset-4 transition-colors hover:decoration-copper"
             >
               see what I've built
-              <motion.span
-                variants={{ hover: { x: 5 } }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
+              <motion.span variants={{ hover: { x: 5 } }} transition={{ type: "spring", stiffness: 300 }}>
                 →
               </motion.span>
             </motion.a>
           </motion.div>
         </motion.div>
 
-        {/* RIGHT COLUMN: INFOGRAPHIC */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative w-full flex flex-col pt-12 lg:pt-0"
+        {/* RIGHT: photo with hand-drawn frame + floating badges */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+          className="relative mx-auto w-full max-w-sm lg:mx-0 order-1 lg:order-2 lg:max-w-none"
         >
-          {/* Section Divider */}
-          <div className="flex items-center gap-4 mb-8 pr-12">
-            <span className="font-display text-[#f59e0b] text-sm tracking-[0.2em] uppercase font-bold">
-              The Proof
-            </span>
-            <span className="h-0.5 flex-1 bg-paper/10"></span>
+          {/* hand-sketched wobble ring behind the photo */}
+          <svg
+            className="pointer-events-none absolute -inset-6 text-copper/50"
+            viewBox="0 0 300 300"
+            fill="none"
+            aria-hidden="true"
+          >
+            <motion.path
+              d="M150 12 C 220 8, 288 60, 288 150 C 288 232, 228 290, 150 288 C 70 286, 10 226, 12 150 C 14 70, 78 16, 150 12 Z"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeDasharray="6 5"
+              initial={reduce ? undefined : { pathLength: 0 }}
+              animate={reduce ? undefined : { pathLength: 1 }}
+              transition={{ duration: 1.4, delay: 0.5, ease: "easeInOut" }}
+            />
+          </svg>
+
+          <div
+            className={`relative aspect-square w-full overflow-hidden border-2 order-last border-paper bg-ink-2 shadow-[6px_8px_0_0_#e2cfa4] ${BLOB}`}
+          >
+            {hero.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={hero.photo} alt={hero.preferredName} className="h-full w-full object-cover  object-[center_30%] " />
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center">
+                <svg width="36" height="36" viewBox="0 0 40 40" aria-hidden="true">
+                  <circle cx="20" cy="14" r="7" fill="none" stroke="#c9884c" strokeWidth="2" />
+                  <path d="M6 34c0-8 6-13 14-13s14 5 14 13" fill="none" stroke="#c9884c" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <p className="font-mono text-[10px] uppercase tracking-wider text-muted">
+                  Photo pending
+                </p>
+                <p className="max-w-[160px] font-mono text-[9px] leading-relaxed text-muted/70">
+                  add one at <code className="text-copper-soft">/public/hero-photo.jpg</code> and
+                  set it in /admin
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* Metric Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
-            <motion.div 
-              whileHover={{ x: 5 }}
-              className="sm:col-span-2 group cursor-default"
-            >
-              <h3 className="font-display text-6xl text-paper mb-1 group-hover:text-[#f59e0b] transition-colors duration-300">
-                03
-              </h3>
-              <p className="text-lg text-paper/80 font-medium border-l-2 border-[#f59e0b] pl-4">
-                Platforms shipped solo,<br/>end-to-end.
-              </p>
-            </motion.div>
+          {/* floating speech-bubble badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
+            animate={{ opacity: 1, scale: 1, rotate: -4 }}
+            transition={{ duration: 0.5, delay: 0.9, type: "spring", stiffness: 160 }}
+            whileHover={{ rotate: 0, scale: 1.04 }}
+            className="absolute -left-6 top-2 max-w-[170px] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border-2 border-paper bg-copper px-4 py-3 shadow-[3px_4px_0_0_#22314f] sm:-left-10"
+          >
+            <p className="font-display text-lg leading-snug text-paper">{hero.badge}</p>
+          </motion.div>
 
-            <motion.div 
-              whileHover={{ x: 5 }}
-              className="group cursor-default"
-            >
-              <h3 className="font-display text-5xl text-paper mb-1 group-hover:text-[#f59e0b] transition-colors duration-300">
-                .89
-              </h3>
-              <p className="text-base text-paper/80 font-medium border-l-2 border-paper/20 pl-4 group-hover:border-[#f59e0b] transition-colors">
-                F1 on the SROIE<br/>OCR benchmark.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ x: 5 }}
-              className="group cursor-default"
-            >
-              <h3 className="font-display text-5xl text-paper mb-1 group-hover:text-[#f59e0b] transition-colors duration-300">
-                0-Day
-              </h3>
-              <p className="text-base text-paper/80 font-medium border-l-2 border-paper/20 pl-4 group-hover:border-[#f59e0b] transition-colors">
-                Found & fixed a live auth gap before escalation.
-              </p>
-            </motion.div>
-          </div>
+          {/* floating "powered by" card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, rotate: 6 }}
+            animate={{ opacity: 1, scale: 1, rotate: 3 }}
+            transition={{ duration: 0.5, delay: 1.05, type: "spring", stiffness: 160 }}
+            whileHover={{ rotate: 0, scale: 1.03 }}
+            className="absolute -bottom-8 -right-4 w-52 rounded-2xl border-2 border-line bg-ink-2 p-4 shadow-[4px_5px_0_0_#e2cfa4] sm:-right-8 sm:w-56"
+          >
+            <p className="mb-2 font-display text-base text-paper">Powered by</p>
+            <div className="flex flex-wrap gap-1.5">
+              {(hero.poweredBy ?? []).map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-line bg-ink-3 px-2.5 py-1 font-mono text-[10px] text-muted"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
-
       </div>
     </section>
   );

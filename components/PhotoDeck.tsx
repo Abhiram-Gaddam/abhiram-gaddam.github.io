@@ -84,7 +84,6 @@
 //   );
 // }
 
-
 "use client";
 
 import { useState } from "react";
@@ -122,6 +121,7 @@ export default function PhotoDeck({
         const isTop = stackPos === 0;
         const depth = order.length - stackPos;
         const dir = stackPos % 2 === 0 ? -1 : 1;
+        
         return (
           <motion.button
             key={picIndex}
@@ -133,15 +133,15 @@ export default function PhotoDeck({
               x: isTop ? 0 : dir * (14 + stackPos * 10),
               y: stackPos * 10,
             }}
-            // 🌟 Swapped standard easeOut for fluid spring physics
             transition={{ 
               type: "spring", 
-              stiffness: 180, 
-              damping: 22,
-              mass: 0.9 
+              // Tighter spring makes the flip feel instant and light
+              stiffness: 250, 
+              damping: 25,
             }}
             style={{ zIndex: depth, cursor: isTop ? "default" : "pointer" }}
-            className="absolute left-0 right-0 top-0 mx-auto h-full w-56 overflow-hidden rounded-2xl border-2 bg-ink-2 shadow-[4px_6px_0_0_#e2cfa4] sm:w-64"
+            // Added will-change-transform for smooth GPU hardware rendering
+            className="absolute left-0 right-0 top-0 mx-auto h-full w-56 overflow-hidden rounded-2xl border-2 bg-ink-2 shadow-[4px_6px_0_0_#e2cfa4] will-change-transform sm:w-64"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

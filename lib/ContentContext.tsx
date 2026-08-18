@@ -12,6 +12,35 @@ import { Content, defaultContent } from "./content";
 
 const STORAGE_KEY = "portfolio_content_override_v1";
 
+/**
+ * Recursively merges saved data on top of the current default shape.
+ * Any field that exists in `defaultContent` but is missing from an older
+ * saved override (because the content schema grew since the person last
+ * saved) falls back to the default instead of being `undefined`. Arrays
+ * are taken wholesale from the override when present, since arrays like
+ * projects/experience are meant to be fully replaceable, not merged
+ * item-by-item.
+ */
+function deepMerge<T>(base: T, override: unknown): T {
+  if (Array.isArray(base)) {
+    return (Array.isArray(override) ? override : base) as T;
+  }
+  if (base !== null && typeof base === "object") {
+    if (override === null || typeof override !== "object" || Array.isArray(override)) {
+      return base;
+    }
+    const result: Record<string, unknown> = { ...(base as Record<string, unknown>) };
+    for (const key of Object.keys(base as Record<string, unknown>)) {
+      result[key] = deepMerge(
+        (base as Record<string, unknown>)[key],
+        (override as Record<string, unknown>)[key]
+      );
+    }
+    return result as T;
+  }
+  return override !== undefined ? (override as T) : base;
+}
+
 interface ContentContextValue {
   content: Content;
   setContent: (next: Content) => void;
@@ -35,8 +64,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as Content;
-        setContentState(parsed);
+        const parsed = JSON.parse(raw);
+        setContentState(deepMerge(defaultContent, parsed));
       }
     } catch (e) {
       console.error("Failed to load saved content, using defaults.", e);

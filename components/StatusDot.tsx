@@ -6,6 +6,14 @@ const STATUS_MAP: Record<ProjectStatus, { label: string; color: string; pulse: b
   archived: { label: "archived", color: "#9aa5b8", pulse: false },
 };
 
+export function OriginBadge({ origin }: { origin: "freelance" | "personal" }) {
+  return (
+    <span className="rounded-full border border-line bg-ink-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+      {origin === "freelance" ? "Freelance" : "Personal project"}
+    </span>
+  );
+}
+
 export default function StatusDot({ status }: { status: ProjectStatus }) {
   const meta = STATUS_MAP[status];
   return (

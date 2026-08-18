@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useContent } from "@/lib/ContentContext";
 import Nav from "@/components/Nav";
 import ProjectVisual from "@/components/ProjectVisual";
-import StatusDot from "@/components/StatusDot";
+import StatusDot, { OriginBadge } from "@/components/StatusDot";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -45,7 +45,7 @@ export default function ProjectCaseStudyPage() {
   return (
     <>
       <Nav />
-      <article className="mx-auto max-w-6xl px-6 py-14 sm:px-10 lg:px-16">
+      <article className="mx-auto max-w-4xl px-6 py-14 sm:px-10 lg:px-16">
         <Link
           href="/#projects"
           className="mb-10 inline-block font-display text-lg text-paper underline decoration-copper decoration-wavy underline-offset-4 hover:text-copper-bright"
@@ -59,6 +59,7 @@ export default function ProjectCaseStudyPage() {
               {String(index + 1).padStart(2, "0")} / {String(content.projects.length).padStart(2, "0")}
             </span>
             <StatusDot status={project.status} />
+            <OriginBadge origin={project.origin} />
           </div>
           <h1 className="font-display text-5xl text-paper sm:text-6xl">{project.name}</h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">{project.what}</p>

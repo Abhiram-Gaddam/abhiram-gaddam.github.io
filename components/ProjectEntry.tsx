@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/lib/content";
 import ProjectVisual from "./ProjectVisual";
-import StatusDot from "./StatusDot";
+import StatusDot, { OriginBadge } from "./StatusDot";
 
 export default function ProjectEntry({ project, index }: { project: Project; index: number }) {
   const [hovered, setHovered] = useState(false);
@@ -62,6 +62,7 @@ export default function ProjectEntry({ project, index }: { project: Project; ind
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <StatusDot status={project.status} />
+                    <OriginBadge origin={project.origin} />
                   </div>
                   <h3 className="font-display text-2xl text-paper sm:text-3xl">{project.name}</h3>
                   <p className="mt-1.5 line-clamp-2 max-w-md text-sm leading-relaxed text-muted sm:text-base">

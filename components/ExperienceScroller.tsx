@@ -213,7 +213,6 @@ import {
   MotionValue,
   useMotionValueEvent,
   useScroll,
-  useSpring,
   useTransform,
 } from "framer-motion";
 import { ExperienceEntry } from "@/lib/content";
@@ -230,14 +229,7 @@ export default function ExperienceScroller({ entries }: { entries: ExperienceEnt
     offset: ["start start", "end end"],
   });
 
-  // 🌟 THE MAGIC FIX: Smooths out jagged mouse wheels into a fluid animation
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  useMotionValueEvent(smoothProgress, "change", (v) => {
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
     const idx = Math.min(entries.length - 1, Math.max(0, Math.round(v * entries.length - 0.5)));
     setActiveIndex((prev) => (prev === idx ? prev : idx));
   });
@@ -291,7 +283,7 @@ export default function ExperienceScroller({ entries }: { entries: ExperienceEnt
                 entry={entry}
                 index={i}
                 total={entries.length}
-                scrollYProgress={smoothProgress} // Passing smooth progress instead of raw
+                scrollYProgress={scrollYProgress}
                 accent={ACCENTS[i % ACCENTS.length]}
               />
             ))}
@@ -305,7 +297,7 @@ export default function ExperienceScroller({ entries }: { entries: ExperienceEnt
                 entry={entry}
                 index={i}
                 total={entries.length}
-                scrollYProgress={smoothProgress} // Passing smooth progress instead of raw
+                scrollYProgress={scrollYProgress}
                 accent={ACCENTS[i % ACCENTS.length]}
               />
             ))}
@@ -327,36 +319,43 @@ function useSlideOpacity(
   index: number,
   total: number
 ) {
-  const start = index / total;
-  const end = (index + 1) / total;
-  // 🌟 Increased edge duration to create a seamless, buttery crossfade overlap
-  const edge = (end - start) * 0.35; 
+  const section = 1 / total;
+  const start = index * section;
+  const end = start + section;
+  const edge = section * 0.15; // Smooth overlap without bleeding into 3 slides
 
-  let opacityInput, opacityOutput, yInput, yOutput;
+  let input: number[];
+  let outputOpacity: number[];
+  let outputY: number[];
 
-  // By using start - edge and end + edge, we force the previous slide to stay visible
-  // while the new slide is already coming in. This eliminates the "laggy" flashing entirely.
-  if (index === 0) {
-    opacityInput = [0, end - edge, end + edge];
-    opacityOutput = [1, 1, 0];
-    yInput = [0, end - edge, end + edge];
-    yOutput = [0, 0, -32];
+  // FIX: This explicitly clamps inputs so they NEVER go below 0 or above 1.
+  // This prevents the Web Animations API from crashing.
+  if (total <= 1) {
+    input = [0, 1];
+    outputOpacity = [1, 1];
+    outputY = [0, 0];
+  } else if (index === 0) {
+    input = [0, end - edge, end + edge];
+    outputOpacity = [1, 1, 0];
+    outputY = [0, 0, -20];
   } else if (index === total - 1) {
-    opacityInput = [start - edge, start + edge, 1];
-    opacityOutput = [0, 1, 1];
-    yInput = [start - edge, start + edge, 1];
-    yOutput = [32, 0, 0];
+    input = [start - edge, start + edge, 1];
+    outputOpacity = [0, 1, 1];
+    outputY = [20, 0, 0];
   } else {
-    opacityInput = [start - edge, start + edge, end - edge, end + edge];
-    opacityOutput = [0, 1, 1, 0];
-    yInput = [start - edge, start + edge, end - edge, end + edge];
-    yOutput = [32, 0, 0, -32];
+    input = [start - edge, start + edge, end - edge, end + edge];
+    outputOpacity = [0, 1, 1, 0];
+    outputY = [20, 0, 0, -20];
   }
 
-  const opacity = useTransform(scrollYProgress, opacityInput, opacityOutput);
-  const y = useTransform(scrollYProgress, yInput, yOutput);
+  const opacity = useTransform(scrollYProgress, input, outputOpacity);
+  const y = useTransform(scrollYProgress, input, outputY);
+  
+  // Hides inactive slides to prevent GPU overdraw and heavy DOM lag
+  const visibility = useTransform(opacity, (v) => (v > 0.01 ? "visible" : "hidden"));
+  const pointerEvents = useTransform(opacity, (v) => (v > 0.5 ? "auto" : "none"));
 
-  return { opacity, y };
+  return { opacity, y, visibility, pointerEvents };
 }
 
 function ContentSlide({
@@ -372,13 +371,13 @@ function ContentSlide({
   scrollYProgress: MotionValue<number>;
   accent: string;
 }) {
-  const { opacity, y } = useSlideOpacity(scrollYProgress, index, total);
-  const pointerEvents = useTransform(opacity, (o) => (o > 0.5 ? "auto" : "none")) as MotionValue<
-    "auto" | "none"
-  >;
+  const { opacity, y, visibility, pointerEvents } = useSlideOpacity(scrollYProgress, index, total);
 
   return (
-    <motion.div style={{ opacity, y, pointerEvents }} className="absolute inset-0">
+    <motion.div 
+      style={{ opacity, y, visibility, pointerEvents }} 
+      className="absolute inset-0 will-change-transform"
+    >
       <div className="mb-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h3 className="font-display text-3xl text-paper sm:text-4xl">{entry.org}</h3>
         {entry.period && <span className="font-mono text-xs text-muted/70">{entry.period}</span>}
@@ -409,13 +408,13 @@ function DeckSlide({
   scrollYProgress: MotionValue<number>;
   accent: string;
 }) {
-  const { opacity, y } = useSlideOpacity(scrollYProgress, index, total);
-  const pointerEvents = useTransform(opacity, (o) => (o > 0.5 ? "auto" : "none")) as MotionValue<
-    "auto" | "none"
-  >;
+  const { opacity, y, visibility, pointerEvents } = useSlideOpacity(scrollYProgress, index, total);
 
   return (
-    <motion.div style={{ opacity, y, pointerEvents }} className="absolute inset-0 flex items-center justify-center">
+    <motion.div 
+      style={{ opacity, y, visibility, pointerEvents }} 
+      className="absolute inset-0 flex items-center justify-center will-change-transform"
+    >
       <PhotoDeck images={entry.images} orgId={entry.id} accent={accent} />
     </motion.div>
   );

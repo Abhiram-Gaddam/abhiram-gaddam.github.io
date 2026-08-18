@@ -689,12 +689,7 @@ export default function AdminEditor() {
               type="file"
               accept="application/json"
               className="hidden"
-              onChange={(e) => {
-                if (e.target.files?.[0]) {
-                  handleImport(e.target.files[0]);
-                  e.target.value = "";
-                }
-              }}
+              onChange={(e) => e.target.files && handleImport(e.target.files[0])}
             />
           </label>
           <button
@@ -802,6 +797,58 @@ export default function AdminEditor() {
               }
             />
           </div>
+          <TextField
+            label="Photo path (e.g. /hero-photo.jpg — leave blank for placeholder)"
+            value={content.hero.photo ?? ""}
+            onChange={(v) => updateContent((d) => ({ ...d, hero: { ...d.hero, photo: v } }))}
+          />
+          <TextField
+            label="Speech-bubble badge text"
+            value={content.hero.badge}
+            onChange={(v) => updateContent((d) => ({ ...d, hero: { ...d.hero, badge: v } }))}
+          />
+          <div>
+            <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
+              "Powered by" tags
+            </p>
+            <div className="space-y-2">
+              {content.hero.poweredBy.map((tag, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    value={tag}
+                    onChange={(e) => {
+                      const poweredBy = [...content.hero.poweredBy];
+                      poweredBy[i] = e.target.value;
+                      updateContent((d) => ({ ...d, hero: { ...d.hero, poweredBy } }));
+                    }}
+                    className="flex-1 rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+                  />
+                  <button
+                    onClick={() =>
+                      updateContent((d) => ({
+                        ...d,
+                        hero: { ...d.hero, poweredBy: d.hero.poweredBy.filter((_, x) => x !== i) },
+                      }))
+                    }
+                    className="px-2 font-mono text-xs text-danger"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  updateContent((d) => ({
+                    ...d,
+                    hero: { ...d.hero, poweredBy: [...d.hero.poweredBy, ""] },
+                  }))
+                }
+                className="font-mono text-xs text-copper-soft"
+              >
+                + Add tag
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -809,7 +856,7 @@ export default function AdminEditor() {
         <ListEditor
           items={content.skills}
           onChange={(items) => updateContent((d) => ({ ...d, skills: items }))}
-          newItem={{ category: "", stack: "", depth: "Comfortable" as const }}
+          newItem={{ category: "", stack: "", depth: "Comfortable" , story: "" }}
           renderItem={(item, update) => (
             <div className="grid gap-3 sm:grid-cols-3">
               <TextField
@@ -849,6 +896,7 @@ export default function AdminEditor() {
             impact: "",
             links: "",
             status: "code-complete",
+            origin: "personal",
             image: "",
           }}
           renderItem={(item, update) => (
@@ -899,13 +947,19 @@ export default function AdminEditor() {
                 value={item.image ?? ""}
                 onChange={(v) => update({ ...item, image: v })}
               />
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-3">
                 <TextField label="Links" value={item.links} onChange={(v) => update({ ...item, links: v })} />
                 <SelectField
                   label="Status"
                   value={item.status}
                   options={["live", "code-complete", "archived"]}
                   onChange={(v) => update({ ...item, status: v as Project["status"] })}
+                />
+                <SelectField
+                  label="Origin"
+                  value={item.origin}
+                  options={["freelance", "personal"]}
+                  onChange={(v) => update({ ...item, origin: v as Project["origin"] })}
                 />
               </div>
             </div>
@@ -937,7 +991,7 @@ export default function AdminEditor() {
                           bullets[bi] = e.target.value;
                           update({ ...item, bullets });
                         }}
-                        className="min-h-11 flex-1 rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+                        className="min-h-[44px] flex-1 rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
                       />
                       <button
                         onClick={() =>
@@ -1145,7 +1199,7 @@ function TextArea({
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-h-22.5 w-full rounded-md border border-line bg-ink-3 p-2.5 text-sm text-paper focus:border-copper focus:outline-none"
+        className="min-h-[90px] w-full rounded-md border border-line bg-ink-3 p-2.5 text-sm text-paper focus:border-copper focus:outline-none"
       />
     </label>
   );
@@ -1182,8 +1236,7 @@ function SelectField({
   );
 }
 
-// Removed the strict { id?: string } constraint to allow arrays that don't have an ID (like Skills)
-function ListEditor<T>({
+function ListEditor<T extends { id?: string }>({
   items,
   onChange,
   newItem,
@@ -1197,8 +1250,7 @@ function ListEditor<T>({
   return (
     <div className="space-y-6">
       {items.map((item, i) => (
-        // Safely check for an ID dynamically, fallback to the array index if it doesn't exist
-        <div key={(item as any)?.id ?? i} className="rounded-lg border border-line bg-ink-2 p-4">
+        <div key={item.id ?? i} className="rounded-lg border border-line bg-ink-2 p-4">
           <div className="mb-3 flex items-center justify-between">
             <span className="font-mono text-[11px] uppercase tracking-wider text-copper-soft">
               Item {i + 1}

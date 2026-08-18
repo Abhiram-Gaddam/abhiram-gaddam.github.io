@@ -12,15 +12,22 @@ export interface Project {
   impact: string;
   links: string;
   status: ProjectStatus;
+  /** Paid client work vs. a self-initiated project — shown as a small tag on the card. */
+  origin: "freelance" | "personal";
   /** Optional path to a real screenshot, e.g. "/projects/eaap.png".
    * Leave empty and the site shows a clean placeholder instead. */
   image?: string;
 }
 
 export interface SkillCategory {
+  id?: string; //
   category: string;
   stack: string;
   depth: "Production-ready" | "Comfortable" | "Learning";
+  /** Short story shown when the tile expands on hover (desktop) or tap (mobile). */
+  story: string;
+  /** Optional link to a project that proves this — usually a case-study page. */
+  proofLink?: { label: string; href: string };
 }
 
 export interface ExperienceEntry {
@@ -46,6 +53,12 @@ export interface Content {
     subheadline: string;
     ctaLabel: string;
     ctaHref: string;
+    /** Short punchy line shown in a floating speech-bubble badge next to the photo. */
+    badge: string;
+    /** Playful, human tags shown in the "Powered by" card. */
+    poweredBy: string[];
+    /** Optional path to a real photo, e.g. "/hero-photo.jpg". Leave empty for a placeholder. */
+    photo?: string;
   };
   skills: SkillCategory[];
   projects: Project[];
@@ -71,37 +84,56 @@ export const defaultContent: Content = {
     targetRoles:
       "Associate Software Developer · Junior Full-Stack Developer · GenAI Developer",
     oneLiner:
-      "Full-stack developer building and shipping real products, with hands-on experience in GenAI systems.",
+      "A recent grad who'd rather show you what I've built than tell you what I could build.",
   },
   hero: {
     name: "Gaddam Bhanu Venkata Abhiram",
-    preferredName: "Abhiram",
-    title: "I build things people actually use.",
+    preferredName: "Gaddam Abhiram",
+    title: "Recent Graduate. Freelancer.",
+    // title: "A graduated a few months ago. I started shipping way before that.",
     subheadline:
-      "Three platforms shipped end-to-end, a fraud model that catches the fraud, a RAG pipeline that answers real questions — I'd rather you scroll through the proof than read another paragraph about it.",
+"I turn messy workflows into clean digital systems. While finishing my degree, I shipped three production platforms for real clients from medical portals to Prop valuation pipelines.",
+//     subheadline:
+// "While finishing my degree, I built and shipped three production platforms for real clients. From a statewide medical association portal to a complex property valuation pipeline, I specialize in turning messy workflows into clean, live digital systems.",    // subheadline:
+    //   "Three platforms built for real clients, a fraud model that actually catches fraud, an AI that reads invoices so you don't have to. I'm early in my career — but everything below is real, live, and mine.",
     ctaLabel: "Connect on LinkedIn",
     ctaHref: "https://www.linkedin.com/in/abhiramgaddam/",
+    badge: "Student on paper. Builder everywhere else.",
+    poweredBy: [ "2 AM debugging", "Free-tier GPU quota", "One more feature","Badminton smashes" ],
+    photo: "/GaddamAbhiram.jpg",
   },
   skills: [
     {
       category: "Full Stack",
       stack: "Next.js, Node.js — the backbone of everything I've shipped",
       depth: "Comfortable",
+      story:
+        "Every real product I've shipped runs on this stack — EAAP's auth and payments, the property valuation tool's multi-step forms, Global Academy's admin panel. If it needs a database, a login flow, or a webhook that actually has to work, this is what I reach for.",
+      proofLink: { label: "See it in EAAP", href: "/projects/eaap" },
     },
     {
       category: "GenAI / RAG",
       stack: "LlamaIndex, FAISS, embeddings — retrieval that's actually tuned, not just wired up",
       depth: "Comfortable",
+      story:
+        "I built a hybrid retrieval pipeline from scratch — BM25 plus embeddings plus a reranker — because plain vector search kept missing the obvious answer. The Invoice Assistant is the production version of that lesson.",
+      proofLink: { label: "See it in Invoice Assistant", href: "/projects/invoice-assistant" },
     },
     {
       category: "Programming",
       stack: "Java, Python — from coursework to production ML pipelines",
       depth: "Comfortable",
+      story:
+        "Java got me through coursework and data structures. Python is what I actually build with now — from a fraud model that went from missing every case to catching the overwhelming majority, to every ML pipeline I've touched since.",
+      proofLink: { label: "See it in Fraud Detection", href: "/projects/fraud-detection" },
     },
     {
       category: "Tools & Infra",
       stack: "Git, GitHub, Vercel, Supabase, AWS S3 — my daily deploy-and-debug kit",
       depth: "Comfortable",
+      story:
+        "Deploying isn't an afterthought for me. I've debugged a production crash on Vercel under deadline, pinned a dependency version that was breaking the build, and wired up S3 and Supabase enough times that it's muscle memory now.",
+      proofLink: { label: "See it in Property Valuation", href: "/projects/property-valuation" },
     },
   ],
   projects: [
@@ -125,6 +157,8 @@ export const defaultContent: Content = {
         "Gave the association a central platform for membership, events, publications, and certification — replacing a fragmented manual process with self-serve tools for admins and members.",
       links: "https://eaap.in",
       status: "live",
+      origin: "freelance",
+      image: "/ScreenShots/Eaap-1.png"
     },
     {
       id: "global-academy",
@@ -145,6 +179,9 @@ export const defaultContent: Content = {
       impact: "Not yet specified — update via /admin",
       links: "",
       status: "live",
+      origin: "freelance",
+ 
+      image: "/ScreenShots/GAE-1.png"
     },
     {
       id: "property-valuation",
@@ -166,6 +203,9 @@ export const defaultContent: Content = {
         "Replaced a manual, disjointed report-creation process with a structured 3-stage digital pipeline and a reusable template system.",
       links: "https://dsk-saas.vercel.app/",
       status: "live",
+      origin: "freelance",
+      image: "/ScreenShots/GAE-1.png"
+
     },
     {
       id: "invoice-assistant",
@@ -188,6 +228,9 @@ export const defaultContent: Content = {
         "Micro-average F1 of ~0.89 on the SROIE benchmark. Reduced embedding API calls by ~70% with the LRU cache. Cut chat latency by ~30% via concurrent async fetches.",
       links: "https://github.com/Abhiram-Gaddam/Invoice-and-Expense-Analysis",
       status: "code-complete",
+      origin: "personal",      
+      image: "/ScreenShots/GAE-1.png"
+
     },
     {
       id: "fraud-detection",
@@ -211,6 +254,9 @@ export const defaultContent: Content = {
         "Accuracy ~99%, ROC-AUC >0.98, Average Precision >0.96, Recall for fraud >0.96. Recall on fraud jumped from 0% to >85% after adding ADASYN.",
       links: "",
       status: "code-complete",
+      origin: "personal",
+      image: "/ScreenShots/GAE-1.png"
+
     },
   ],
   experience: [
@@ -223,11 +269,12 @@ export const defaultContent: Content = {
         "Took 3 platforms from zero to live as sole developer: EAAP, Global Academy of Embryology, and an internal property valuation workflow tool — each one architected, built, and deployed solo.",
         "The real work wasn't the happy path — it was catching an unauthenticated API route before it became a problem, and untangling a production dependency crash under deadline pressure.",
       ],
-      images :[ "/GaddamAbhiram.jpg", "/ScreenShots/EAAP-1.png" , '/ScreenShots/GAE-1.png',]
+      images : ["/GaddamAbhiram.jpg","/ScreenShots/EAAP-1.png","/ScreenShots/GAE-1.png"]
+
     },
     {
       id: "asterisks",
-      org: 'Asterisks Inc. (handle "saikrishna")',
+      org: 'Asterisks Inc.',
       role: "Frontend Developer",
       period: "",
       bullets: [
@@ -237,6 +284,7 @@ export const defaultContent: Content = {
         "VITUOR — medical publishing platform: built public pages and dashboard components.",
         "Dr. Yethindra Vityala — personal site: built the frontend of the public pages (a small contribution to a larger build).",
       ],
+      images : [ "/ScreenShots/yetzu.png","/ScreenShots/avanya.png"]
     },
     {
       id: "4sightai",
@@ -248,6 +296,7 @@ export const defaultContent: Content = {
         "Worked on something with real stakes — turning old, undigitized police records into a searchable system people could actually query instead of hunting through paper.",
         "Built the pipeline behind that: batches of documents in, Google Cloud Vision API in the middle, structured JSON out — down to who signed what and when.",
       ],
+      images : [ "/ScreenShots/rsvp.png","/ScreenShots/cert.png"]
     },
   ],
   achievements: [
