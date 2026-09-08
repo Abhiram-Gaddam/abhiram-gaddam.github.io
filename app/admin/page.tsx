@@ -1,3 +1,6 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { verifySessionToken } from "@/lib/adminSession";
 import AdminEditor from "@/components/admin/AdminEditor";
 
 export const metadata = {
@@ -5,6 +8,13 @@ export const metadata = {
   robots: "noindex, nofollow",
 };
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session")?.value;
+
+  if (!verifySessionToken(session)) {
+    redirect("/admin/login");
+  }
+
   return <AdminEditor />;
 }

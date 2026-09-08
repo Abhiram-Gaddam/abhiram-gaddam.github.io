@@ -1,3 +1,4 @@
+ 
 // "use client";
 
 // import { useState } from "react";
@@ -186,6 +187,58 @@
 //               }
 //             />
 //           </div>
+//           <TextField
+//             label="Photo path (e.g. /hero-photo.jpg — leave blank for placeholder)"
+//             value={content.hero.photo ?? ""}
+//             onChange={(v) => updateContent((d) => ({ ...d, hero: { ...d.hero, photo: v } }))}
+//           />
+//           <TextField
+//             label="Speech-bubble badge text"
+//             value={content.hero.badge}
+//             onChange={(v) => updateContent((d) => ({ ...d, hero: { ...d.hero, badge: v } }))}
+//           />
+//           <div>
+//             <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
+//               "Powered by" tags
+//             </p>
+//             <div className="space-y-2">
+//               {content.hero.poweredBy.map((tag, i) => (
+//                 <div key={i} className="flex gap-2">
+//                   <input
+//                     value={tag}
+//                     onChange={(e) => {
+//                       const poweredBy = [...content.hero.poweredBy];
+//                       poweredBy[i] = e.target.value;
+//                       updateContent((d) => ({ ...d, hero: { ...d.hero, poweredBy } }));
+//                     }}
+//                     className="flex-1 rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+//                   />
+//                   <button
+//                     onClick={() =>
+//                       updateContent((d) => ({
+//                         ...d,
+//                         hero: { ...d.hero, poweredBy: d.hero.poweredBy.filter((_, x) => x !== i) },
+//                       }))
+//                     }
+//                     className="px-2 font-mono text-xs text-danger"
+//                   >
+//                     ✕
+//                   </button>
+//                 </div>
+//               ))}
+//               <button
+//                 onClick={() =>
+//                   updateContent((d) => ({
+//                     ...d,
+//                     hero: { ...d.hero, poweredBy: [...d.hero.poweredBy, ""] },
+//                   }))
+//                 }
+//                 className="font-mono text-xs text-copper-soft"
+//               >
+//                 + Add tag
+//               </button>
+//             </div>
+//           </div>
 //         </div>
 //       )}
 
@@ -193,7 +246,7 @@
 //         <ListEditor
 //           items={content.skills}
 //           onChange={(items) => updateContent((d) => ({ ...d, skills: items }))}
-//           newItem={{ category: "", stack: "", depth: "Comfortable" }}
+//           newItem={{ category: "", stack: "", depth: "Comfortable" , story : "" }}
 //           renderItem={(item, update) => (
 //             <div className="grid gap-3 sm:grid-cols-3">
 //               <TextField
@@ -233,6 +286,7 @@
 //             impact: "",
 //             links: "",
 //             status: "code-complete",
+//             origin: "personal",
 //             image: "",
 //           }}
 //           renderItem={(item, update) => (
@@ -283,13 +337,19 @@
 //                 value={item.image ?? ""}
 //                 onChange={(v) => update({ ...item, image: v })}
 //               />
-//               <div className="grid gap-3 sm:grid-cols-2">
+//               <div className="grid gap-3 sm:grid-cols-3">
 //                 <TextField label="Links" value={item.links} onChange={(v) => update({ ...item, links: v })} />
 //                 <SelectField
 //                   label="Status"
 //                   value={item.status}
 //                   options={["live", "code-complete", "archived"]}
 //                   onChange={(v) => update({ ...item, status: v as Project["status"] })}
+//                 />
+//                 <SelectField
+//                   label="Origin"
+//                   value={item.origin}
+//                   options={["freelance", "personal"]}
+//                   onChange={(v) => update({ ...item, origin: v as Project["origin"] })}
 //                 />
 //               </div>
 //             </div>
@@ -477,6 +537,88 @@
 //             />
 //             Include personal photo on /about
 //           </label>
+
+//           <div>
+//             <p className="mb-1.5 mt-2 font-mono text-[11px] uppercase tracking-wider text-muted">
+//               Journey stops (the hand-drawn map on /about)
+//             </p>
+//             <div className="space-y-3">
+//               {content.personal.journey.map((stop, i) => (
+//                 <div key={stop.id} className="rounded-lg border border-line bg-ink-2 p-3">
+//                   <div className="mb-2 flex items-center justify-between">
+//                     <span className="font-mono text-[11px] text-copper-soft">Stop {i + 1}</span>
+//                     <button
+//                       onClick={() =>
+//                         updateContent((d) => ({
+//                           ...d,
+//                           personal: {
+//                             ...d.personal,
+//                             journey: d.personal.journey.filter((_, x) => x !== i),
+//                           },
+//                         }))
+//                       }
+//                       className="font-mono text-xs text-danger"
+//                     >
+//                       Remove
+//                     </button>
+//                   </div>
+//                   <div className="grid gap-2 sm:grid-cols-2">
+//                     <input
+//                       value={stop.title}
+//                       placeholder="Title"
+//                       onChange={(e) => {
+//                         const journey = [...content.personal.journey];
+//                         journey[i] = { ...stop, title: e.target.value };
+//                         updateContent((d) => ({ ...d, personal: { ...d.personal, journey } }));
+//                       }}
+//                       className="rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+//                     />
+//                     <input
+//                       value={stop.period ?? ""}
+//                       placeholder="Period (optional)"
+//                       onChange={(e) => {
+//                         const journey = [...content.personal.journey];
+//                         journey[i] = { ...stop, period: e.target.value };
+//                         updateContent((d) => ({ ...d, personal: { ...d.personal, journey } }));
+//                       }}
+//                       className="rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+//                     />
+//                   </div>
+//                   <textarea
+//                     value={stop.description}
+//                     placeholder="Description"
+//                     onChange={(e) => {
+//                       const journey = [...content.personal.journey];
+//                       journey[i] = { ...stop, description: e.target.value };
+//                       updateContent((d) => ({ ...d, personal: { ...d.personal, journey } }));
+//                     }}
+//                     className="mt-2 min-h-[60px] w-full rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+//                   />
+//                 </div>
+//               ))}
+//               <button
+//                 onClick={() =>
+//                   updateContent((d) => ({
+//                     ...d,
+//                     personal: {
+//                       ...d.personal,
+//                       journey: [
+//                         ...d.personal.journey,
+//                         { id: `stop-${Date.now()}`, title: "", description: "" },
+//                       ],
+//                     },
+//                   }))
+//                 }
+//                 className="font-mono text-xs text-copper-soft"
+//               >
+//                 + Add stop
+//               </button>
+//               <p className="font-mono text-[10px] text-muted/70">
+//                 Drag-to-reorder isn't built — to reorder, edit the array order directly in
+//                 lib/content.ts.
+//               </p>
+//             </div>
+//           </div>
 //         </div>
 //       )}
 
@@ -628,19 +770,25 @@ const TABS = [
 type Tab = (typeof TABS)[number];
 
 export default function AdminEditor() {
-  const { content, updateContent, saveNow, resetToDefault, lastSavedAt, hydrated } =
+  const { content, updateContent, saveNow, resetToDefault, lastSavedAt, hydrated, saveError } =
     useContent();
   const [tab, setTab] = useState<Tab>("Positioning");
   const [toast, setToast] = useState("");
 
   const flash = (msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(""), 2000);
+    setTimeout(() => setToast(""), 2500);
   };
 
-  const handleSave = () => {
-    saveNow();
-    flash("Saved to this browser");
+  const handleSave = async () => {
+    await saveNow();
+    // saveError is only populated on failure; check it right after the await.
+    flash(saveError ? `Save failed: ${saveError}` : "Saved to the database");
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
+    window.location.href = "/admin/login";
   };
 
   const handleExport = () => {
@@ -678,8 +826,7 @@ export default function AdminEditor() {
         <div>
           <h1 className="font-mono text-xl text-paper">Content admin</h1>
           <p className="mt-1 text-sm text-muted">
-            Edits save to this browser. Export JSON to bake changes into{" "}
-            <code className="text-copper-soft">lib/content.ts</code> permanently.
+            Edits save directly to the database — visible to every visitor once saved.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -706,11 +853,18 @@ export default function AdminEditor() {
           </button>
           <button
             onClick={() => {
-              if (confirm("Reset all edits back to defaults?")) resetToDefault();
+              if (confirm("Reset all edits back to defaults? (Not saved until you click Save.)"))
+                resetToDefault();
             }}
             className="rounded-md border border-line px-4 py-2 font-mono text-xs text-danger hover:border-danger"
           >
             Reset
+          </button>
+          <button
+            onClick={handleLogout}
+            className="rounded-md border border-line px-4 py-2 font-mono text-xs text-muted hover:border-danger hover:text-danger"
+          >
+            Log out
           </button>
         </div>
       </div>
@@ -856,7 +1010,7 @@ export default function AdminEditor() {
         <ListEditor
           items={content.skills}
           onChange={(items) => updateContent((d) => ({ ...d, skills: items }))}
-          newItem={{ category: "", stack: "", depth: "Comfortable" , story: "" }}
+          newItem={{ category: "", stack: "", depth: "Comfortable" , story : "" }}
           renderItem={(item, update) => (
             <div className="grid gap-3 sm:grid-cols-3">
               <TextField
@@ -1147,6 +1301,88 @@ export default function AdminEditor() {
             />
             Include personal photo on /about
           </label>
+
+          <div>
+            <p className="mb-1.5 mt-2 font-mono text-[11px] uppercase tracking-wider text-muted">
+              Journey stops (the hand-drawn map on /about)
+            </p>
+            <div className="space-y-3">
+              {content.personal.journey.map((stop, i) => (
+                <div key={stop.id} className="rounded-lg border border-line bg-ink-2 p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-mono text-[11px] text-copper-soft">Stop {i + 1}</span>
+                    <button
+                      onClick={() =>
+                        updateContent((d) => ({
+                          ...d,
+                          personal: {
+                            ...d.personal,
+                            journey: d.personal.journey.filter((_, x) => x !== i),
+                          },
+                        }))
+                      }
+                      className="font-mono text-xs text-danger"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <input
+                      value={stop.title}
+                      placeholder="Title"
+                      onChange={(e) => {
+                        const journey = [...content.personal.journey];
+                        journey[i] = { ...stop, title: e.target.value };
+                        updateContent((d) => ({ ...d, personal: { ...d.personal, journey } }));
+                      }}
+                      className="rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+                    />
+                    <input
+                      value={stop.period ?? ""}
+                      placeholder="Period (optional)"
+                      onChange={(e) => {
+                        const journey = [...content.personal.journey];
+                        journey[i] = { ...stop, period: e.target.value };
+                        updateContent((d) => ({ ...d, personal: { ...d.personal, journey } }));
+                      }}
+                      className="rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+                    />
+                  </div>
+                  <textarea
+                    value={stop.description}
+                    placeholder="Description"
+                    onChange={(e) => {
+                      const journey = [...content.personal.journey];
+                      journey[i] = { ...stop, description: e.target.value };
+                      updateContent((d) => ({ ...d, personal: { ...d.personal, journey } }));
+                    }}
+                    className="mt-2 min-h-[60px] w-full rounded-md border border-line bg-ink-3 p-2 text-sm text-paper"
+                  />
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  updateContent((d) => ({
+                    ...d,
+                    personal: {
+                      ...d.personal,
+                      journey: [
+                        ...d.personal.journey,
+                        { id: `stop-${Date.now()}`, title: "", description: "" },
+                      ],
+                    },
+                  }))
+                }
+                className="font-mono text-xs text-copper-soft"
+              >
+                + Add stop
+              </button>
+              <p className="font-mono text-[10px] text-muted/70">
+                Drag-to-reorder isn't built — to reorder, edit the array order directly in
+                lib/content.ts.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 

@@ -10,77 +10,63 @@ import React, {
 } from "react";
 import { Content, defaultContent } from "./content";
 
-const STORAGE_KEY = "portfolio_content_override_v1";
-
-/**
- * Recursively merges saved data on top of the current default shape.
- * Any field that exists in `defaultContent` but is missing from an older
- * saved override (because the content schema grew since the person last
- * saved) falls back to the default instead of being `undefined`. Arrays
- * are taken wholesale from the override when present, since arrays like
- * projects/experience are meant to be fully replaceable, not merged
- * item-by-item.
- */
-function deepMerge<T>(base: T, override: unknown): T {
-  if (Array.isArray(base)) {
-    return (Array.isArray(override) ? override : base) as T;
-  }
-  if (base !== null && typeof base === "object") {
-    if (override === null || typeof override !== "object" || Array.isArray(override)) {
-      return base;
-    }
-    const result: Record<string, unknown> = { ...(base as Record<string, unknown>) };
-    for (const key of Object.keys(base as Record<string, unknown>)) {
-      result[key] = deepMerge(
-        (base as Record<string, unknown>)[key],
-        (override as Record<string, unknown>)[key]
-      );
-    }
-    return result as T;
-  }
-  return override !== undefined ? (override as T) : base;
-}
-
 interface ContentContextValue {
   content: Content;
   setContent: (next: Content) => void;
   updateContent: (updater: (draft: Content) => Content) => void;
-  saveNow: () => void;
+  saveNow: () => Promise<void>;
   resetToDefault: () => void;
   lastSavedAt: Date | null;
   hydrated: boolean;
+  saveError: string | null;
 }
 
 const ContentContext = createContext<ContentContextValue | null>(null);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
+  // Start with the code defaults immediately — no blank page while the
+  // network request to Supabase resolves.
   const [content, setContentState] = useState<Content>(defaultContent);
   const [hydrated, setHydrated] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const dirtyRef = useRef(false);
 
-  // On mount, merge any saved override on top of defaults.
+  // Load the real content from the database on mount.
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setContentState(deepMerge(defaultContent, parsed));
+    (async () => {
+      try {
+        const res = await fetch("/api/content", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          setContentState(data);
+        }
+      } catch (e) {
+        console.error("Failed to load content from the server — using defaults.", e);
+      } finally {
+        setHydrated(true);
       }
-    } catch (e) {
-      console.error("Failed to load saved content, using defaults.", e);
-    } finally {
-      setHydrated(true);
-    }
+    })();
   }, []);
 
-  const persist = useCallback((data: Content) => {
+  const persist = useCallback(async (data: Content) => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const res = await fetch("/api/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setSaveError(body.error ?? "Save failed");
+        return;
+      }
+      setSaveError(null);
       setLastSavedAt(new Date());
       dirtyRef.current = false;
     } catch (e) {
-      console.error("Save failed — storage may be full.", e);
+      console.error("Save failed", e);
+      setSaveError("Network error while saving");
     }
   }, []);
 
@@ -97,34 +83,38 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const saveNow = useCallback(() => {
-    persist(content);
+  const saveNow = useCallback(async () => {
+    await persist(content);
   }, [content, persist]);
 
   const resetToDefault = useCallback(() => {
-    window.localStorage.removeItem(STORAGE_KEY);
     setContentState(defaultContent);
-    setLastSavedAt(null);
+    dirtyRef.current = true;
   }, []);
 
   // Autosave every 30s if there are unsaved changes.
   useEffect(() => {
     const interval = setInterval(() => {
-      if (dirtyRef.current) {
-        persist(content);
-      }
+      if (dirtyRef.current) persist(content);
     }, 30000);
     return () => clearInterval(interval);
   }, [content, persist]);
 
-  // Save on tab close too.
+  // Best-effort save on tab close.
   useEffect(() => {
     const handler = () => {
-      if (dirtyRef.current) persist(content);
+      if (dirtyRef.current) {
+        fetch("/api/content", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(content),
+          keepalive: true,
+        }).catch(() => {});
+      }
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [content, persist]);
+  }, [content]);
 
   return (
     <ContentContext.Provider
@@ -136,6 +126,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         resetToDefault,
         lastSavedAt,
         hydrated,
+        saveError,
       }}
     >
       {children}
