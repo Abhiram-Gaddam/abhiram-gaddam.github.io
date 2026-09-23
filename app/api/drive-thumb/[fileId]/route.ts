@@ -19,7 +19,7 @@ export async function GET(
       return NextResponse.json({ error: "not_an_image" }, { status: 404 });
     }
 
-    return new NextResponse(file.buffer, {
+    return new NextResponse(new Uint8Array(file.buffer), {
       headers: {
         "Content-Type": file.mimeType,
         // Private cache only in the visitor's own browser — this is
