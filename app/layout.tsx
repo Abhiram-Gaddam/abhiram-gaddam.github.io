@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Caveat, Work_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ContentProvider } from "@/lib/ContentContext";
+import { getContent } from "@/lib/getContent";
 import "./globals.css";
 
 const display = Caveat({
@@ -27,11 +28,16 @@ export const metadata: Metadata = {
     "Shipped platforms, real production fixes, and GenAI systems built outside the classroom.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Fetched here, server-side, before any HTML is sent — this is what makes
+  // the real content show up instantly with no client-side flash, and what
+  // lets search engines see the real page content on first crawl.
+  const initialContent = await getContent();
+
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="bg-ink bg-dot-grid bg-[length:22px_22px] font-sans text-paper antialiased">
-        <ContentProvider>{children}</ContentProvider>
+        <ContentProvider initialContent={initialContent}>{children}</ContentProvider>
       </body>
     </html>
   );

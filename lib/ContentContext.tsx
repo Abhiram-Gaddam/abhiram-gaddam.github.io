@@ -23,17 +23,27 @@ interface ContentContextValue {
 
 const ContentContext = createContext<ContentContextValue | null>(null);
 
-export function ContentProvider({ children }: { children: React.ReactNode }) {
-  // Start with the code defaults immediately — no blank page while the
-  // network request to Supabase resolves.
-  const [content, setContentState] = useState<Content>(defaultContent);
-  const [hydrated, setHydrated] = useState(false);
+export function ContentProvider({
+  children,
+  initialContent,
+}: {
+  children: React.ReactNode;
+  /** Content fetched server-side in the root layout. When provided, the
+   * client skips its own fetch entirely — this is what makes the page
+   * SSR-correct: real content in the initial HTML, no flash of defaults,
+   * search engines see the real page on first load. */
+  initialContent?: Content;
+}) {
+  const [content, setContentState] = useState<Content>(initialContent ?? defaultContent);
+  const [hydrated, setHydrated] = useState(!!initialContent);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const dirtyRef = useRef(false);
 
-  // Load the real content from the database on mount.
+  // Only fetch client-side as a fallback — if the server already handed us
+  // real content via props, there's nothing left to do.
   useEffect(() => {
+    if (initialContent) return;
     (async () => {
       try {
         const res = await fetch("/api/content", { cache: "no-store" });
@@ -47,6 +57,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         setHydrated(true);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const persist = useCallback(async (data: Content) => {

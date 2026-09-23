@@ -651,25 +651,13 @@ export const defaultContent: Content = {
     nonTechInterests:
       "Badminton keeps me sharp — it's fast, it punishes hesitation, and there's no substitute for reflexes built through repetition. I like exploring new places for the same reason I like new codebases: you learn the most when you're a little lost. And I'd rather have one real conversation with someone doing interesting work than scroll past a hundred LinkedIn posts about it.",
     includePhoto: true,
-    journey: [
+    journey: [ 
+      
       {
-        id: "guntur",
-        title: "Guntur, Andhra Pradesh",
+        id: "now",
+        title: "Now",
         description:
-          "Grew up curious about how things work — a habit that turned into taking things apart in code long before I called it 'engineering.'",
-      },
-      {
-        id: "college",
-        title: "R.V.R. & J.C. College of Engineering",
-        period: "2022 – 2026",
-        description:
-          "B.Tech in CSBS. This is where the fundamentals came from — data structures, systems, the theory I'd later stress-test in production.",
-      },
-      {
-        id: "4sightai-stop",
-        title: "4SightAI — Technical Associate",
-        description:
-          "First real internship, real stakes. Built bulk certificate/invitation tools and a document pipeline for a police-records digitization project.",
+          "Graduated. Job hunting. Still shipping — GenAI pipelines, this portfolio, whatever's next.",
       },
       {
         id: "eaap-stop",
@@ -684,10 +672,23 @@ export const defaultContent: Content = {
           "First time working inside a team instead of alone. Five-plus client projects, frontend-focused, learning to build within someone else's system.",
       },
       {
-        id: "now",
-        title: "Now",
+        id: "4sightai-stop",
+        title: "4SightAI — Technical Associate",
         description:
-          "Graduated. Job hunting. Still shipping — GenAI pipelines, this portfolio, whatever's next.",
+          "First real internship, real stakes. Built bulk certificate/invitation tools and a document pipeline for a police-records digitization project.",
+      },
+      {
+        id: "college",
+        title: "R.V.R. & J.C. College of Engineering",
+        period: "2022 – 2026",
+        description:
+          "B.Tech in CSBS. This is where the fundamentals came from — data structures, systems, the theory I'd later stress-test in production.",
+      },
+      {
+        id: "guntur",
+        title: "Guntur, Andhra Pradesh",
+        description:
+          "Grew up curious about how things work — a habit that turned into taking things apart in code long before I called it 'engineering.'",
       },
     ],
   },

@@ -1,30 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getSupabasePublic } from "@/lib/supabasePublic";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { verifySessionToken } from "@/lib/adminSession";
-import { defaultContent } from "@/lib/content";
+import { getContent } from "@/lib/getContent";
 
 export async function GET() {
-  try {
-    const supabase = getSupabasePublic();
-    const { data, error } = await supabase
-      .from("portfolio_content")
-      .select("data")
-      .eq("id", 1)
-      .single();
-
-    // If the table/row isn't set up yet, or the row is still the empty
-    // seed ('{}'), fall back to the code defaults so the site never
-    // shows a broken/empty page.
-    if (error || !data?.data || Object.keys(data.data).length === 0) {
-      return NextResponse.json(defaultContent);
-    }
-    return NextResponse.json(data.data);
-  } catch (e) {
-    console.error("GET /api/content failed, serving defaults:", e);
-    return NextResponse.json(defaultContent);
-  }
+  const content = await getContent();
+  return NextResponse.json(content);
 }
 
 export async function POST(req: NextRequest) {
