@@ -314,7 +314,7 @@
 
 import { Content } from "@/lib/content";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-
+import Image from "next/image";
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
@@ -440,7 +440,16 @@ export default function Hero({ hero }: { hero: Content["hero"] }) {
           >
             {hero.photo ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={hero.photo} alt={hero.preferredName} className="h-full w-full object-cover  object-[center_30%] " />
+              // <img src={hero.photo} alt={hero.preferredName} className="h-full w-full object-cover  object-[center_30%] " />
+              <Image
+                src={hero.photo}
+                alt={`${hero.preferredName}, portrait`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 24rem, 40vw"
+                quality={80}
+                className="object-cover object-[center_30%]"
+              />
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center">
                 <svg width="36" height="36" viewBox="0 0 40 40" aria-hidden="true">
