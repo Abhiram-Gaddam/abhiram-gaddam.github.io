@@ -165,12 +165,17 @@ import Link from "next/link";
 import ClayTilt from "@/components/illustrations/ClayTilt";
 import { BadmintonClay, CompassClay, NetworkClay } from "@/components/illustrations/ClayIcons";
 import JourneyMap from "@/components/Journeymap";
+import { Metadata } from "next";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0 },
 };
-
+export const metadata: Metadata = {
+  title: "About Abhiram Gaddam | Full-Stack & GenAI Developer",
+  description: "About Abhiram Gaddam (Gaddam Abhiram): background, skills, freelance work and the projects he's shipped.",
+  alternates: { canonical: "/about" },
+};
 export default function AboutPage() {
   const { content } = useContent();
   const { personal, hero } = content;
