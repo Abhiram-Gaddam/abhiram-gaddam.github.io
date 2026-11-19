@@ -59,7 +59,8 @@ export default function DriveDocuments() {
       setPassword("");
       await fetchDocs();
     } else {
-      setAuthError("Wrong password.");
+      const body = await res.json().catch(() => null);
+      setAuthError(res.status === 401 ? "Wrong password." : body?.error ?? "Sign-in is temporarily unavailable.");
     }
   }
 

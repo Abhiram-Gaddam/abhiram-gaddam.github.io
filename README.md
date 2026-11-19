@@ -13,15 +13,30 @@ Routes:
 
 ## Database
 
-Content is stored in Supabase, not localStorage. **See `DATABASE_SETUP.md`
-for the full one-time setup** (SQL to run, env vars to set, how the auth
-works). Short version: `/admin` is guarded by a signed session cookie, only
-issued after the correct `ADMIN_PASSWORD`; the actual database write uses a
-service-role key that only ever lives on the server.
+The app reads row `id = 1` from `public.portfolio_content` and saves the
+document in the `data` JSONB column with an `updated_at` timestamp.
+Enable row-level security and allow the anonymous role to select the
+content row. The server uses the Supabase service-role key for writes.
 
-## Full architecture reference
+Apply [the login rate-limit migration](supabase/migrations/20261119000000_login_rate_limit.sql)
+to Supabase before deploying this version. Each login endpoint shares a
+separate budget of 30 attempts per five minutes across all visitors and
+server instances. Sign-in returns a temporary-unavailable error if the
+limiter cannot reach the database.
 
-See `PORTFOLIO_NOTES.md` for a complete walkthrough of the design system,
-content model, component architecture, and the reasoning behind the major
-decisions — written to be dropped into a fresh chat if you need help on this
-project again later.
+## Deployment
+
+Deploy to a host that runs Next.js server routes. On a Node.js 22 host,
+run `npm ci`, `npm run build`, and `npm run start`. GitHub Actions checks
+the server build on pushes and pull requests.
+
+Configure these variables on the host or in `.env.local` for development.
+
+| Feature | Variables |
+| --- | --- |
+| Supabase | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
+| Admin | `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET` |
+| Drive documents | `DRIVE_PASSWORD`, `DRIVE_AUTH_SECRET`, `GOOGLE_DRIVE_FOLDER_ID`, `GOOGLE_SERVICE_ACCOUNT_KEY` |
+
+Set `GOOGLE_SERVICE_ACCOUNT_KEY` to the base64-encoded service-account JSON
+and share the configured Drive folder with that account.

@@ -31,12 +31,17 @@ export async function getFileBuffer(
   fileId: string
 ): Promise<{ buffer: Buffer; mimeType: string } | null> {
   const drive = getDriveClient();
+  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+  if (!folderId) throw new Error("Missing GOOGLE_DRIVE_FOLDER_ID");
 
   const meta = await drive.files.get({
     fileId,
-    fields: "mimeType",
+    fields: "mimeType,parents,trashed",
   });
-  const mimeType = meta.data.mimeType ?? "application/octet-stream";
+  const { mimeType, parents, trashed } = meta.data;
+  if (!parents?.includes(folderId) || trashed || !mimeType?.startsWith("image/")) {
+    return null;
+  }
 
   const res = await drive.files.get(
     { fileId, alt: "media" },

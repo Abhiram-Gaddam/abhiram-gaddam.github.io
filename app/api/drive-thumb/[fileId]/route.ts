@@ -15,13 +15,15 @@ export async function GET(
 
   try {
     const file = await getFileBuffer(fileId);
-    if (!file || !file.mimeType.startsWith("image/")) {
+    if (!file) {
       return NextResponse.json({ error: "not_an_image" }, { status: 404 });
     }
 
     return new NextResponse(new Uint8Array(file.buffer), {
       headers: {
         "Content-Type": file.mimeType,
+        "Content-Security-Policy": "sandbox; default-src 'none'",
+        "X-Content-Type-Options": "nosniff",
         // Private cache only in the visitor's own browser — this is
         // password-gated content, don't let a shared/CDN cache store it.
         "Cache-Control": "private, max-age=3600",

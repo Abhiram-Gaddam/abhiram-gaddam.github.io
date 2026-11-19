@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createDriveToken, DRIVE_COOKIE_NAME, DRIVE_SESSION_HOURS } from "@/lib/drive-auth";
+import { checkLoginRateLimit } from "@/lib/loginRateLimit";
 
 export async function POST(req: NextRequest) {
-  const { password } = await req.json();
-  const correct = process.env.DRIVE_PASSWORD!;
+  const limited = await checkLoginRateLimit("drive");
+  if (limited) return limited;
 
-  const a = Buffer.from(String(password ?? ""));
+  const body = await req.json().catch(() => null);
+  const password = body?.password;
+  const correct = process.env.DRIVE_PASSWORD;
+  if (!correct || !process.env.DRIVE_AUTH_SECRET) {
+    return NextResponse.json({ error: "Sign-in is temporarily unavailable." }, { status: 503 });
+  }
+  if (typeof password !== "string") {
+    return NextResponse.json({ error: "Password is required." }, { status: 400 });
+  }
+
+  const a = Buffer.from(password);
   const b = Buffer.from(correct);
   const match = a.length === b.length && crypto.timingSafeEqual(a, b);
 

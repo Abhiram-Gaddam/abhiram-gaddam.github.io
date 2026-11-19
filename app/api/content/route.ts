@@ -3,10 +3,11 @@ import { cookies } from "next/headers";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { verifySessionToken } from "@/lib/adminSession";
 import { getContent } from "@/lib/getContent";
+import { parseContent } from "@/lib/parseContent";
 
 export async function GET() {
   const content = await getContent();
-  return NextResponse.json(content);
+  return NextResponse.json(content, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(req: NextRequest) {
@@ -24,11 +25,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  const content = parseContent(body);
+  if (!content) {
+    return NextResponse.json({ error: "Invalid portfolio content structure" }, { status: 400 });
+  }
+
   try {
     const supabase = getSupabaseAdmin();
     const { error } = await supabase
       .from("portfolio_content")
-      .upsert({ id: 1, data: body, updated_at: new Date().toISOString() });
+      .upsert({ id: 1, data: content, updated_at: new Date().toISOString() });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

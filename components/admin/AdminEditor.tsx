@@ -781,9 +781,8 @@ export default function AdminEditor() {
   };
 
   const handleSave = async () => {
-    await saveNow();
-    // saveError is only populated on failure; check it right after the await.
-    flash(saveError ? `Save failed: ${saveError}` : "Saved to the database");
+    const error = await saveNow();
+    flash(error ? `Save failed: ${error}` : "Saved to the database");
   };
 
   const handleLogout = async () => {

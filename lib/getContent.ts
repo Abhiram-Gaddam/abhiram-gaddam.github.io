@@ -1,5 +1,7 @@
 import { getSupabasePublic } from "@/lib/supabasePublic";
 import { Content, defaultContent } from "@/lib/content";
+import { parseContent } from "@/lib/parseContent";
+import { connection } from "next/server";
 
 /**
  * Single source of truth for "read the live content, falling back to code
@@ -8,6 +10,7 @@ import { Content, defaultContent } from "@/lib/content";
  * fallback behavior can't drift between the two call sites.
  */
 export async function getContent(): Promise<Content> {
+  await connection();
   try {
     const supabase = getSupabasePublic();
     const { data, error } = await supabase
@@ -16,10 +19,10 @@ export async function getContent(): Promise<Content> {
       .eq("id", 1)
       .single();
 
-    if (error || !data?.data || Object.keys(data.data).length === 0) {
+    if (error) {
       return defaultContent;
     }
-    return data.data as Content;
+    return parseContent(data?.data, defaultContent.personal.journey) ?? defaultContent;
   } catch (e) {
     console.error("getContent() failed, serving defaults:", e);
     return defaultContent;
